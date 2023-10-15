@@ -90,6 +90,11 @@ iptables -A INPUT -j DROP
 # Configure IPv6 if ip6tables is present.
 if [ -x "$(which ip6tables 2>/dev/null)" ]; then
 
+# Set the default rules.
+ip6tables -P INPUT ACCEPT
+ip6tables -P FORWARD ACCEPT
+ip6tables -P OUTPUT ACCEPT
+
 {% if firewall_flush_rules_and_chains %}
   # Remove all rules and chains.
   ip6tables -F
