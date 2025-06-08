@@ -108,8 +108,13 @@ if [ -x "$(which ip6tables 2>/dev/null)" ]; then
   ip6tables -A INPUT -p udp -m udp --dport {{ port }} -j ACCEPT
 {% endfor %}
 
-  # Accept icmp ping requests.
-  ip6tables -A INPUT -p icmpv6 --icmpv6-type echo-request -j ACCEPT
+  # Accept ICMPv6 message types necessary for SLAAC plus echo request/reply
+  ip6tables -A INPUT -p ipv6-icmp --icmpv6-type 128 -j ACCEPT  # Echo Request
+  ip6tables -A INPUT -p ipv6-icmp --icmpv6-type 129 -j ACCEPT  # Echo Reply
+  ip6tables -A INPUT -p ipv6-icmp --icmpv6-type 133 -j ACCEPT  # Router Solicitation
+  ip6tables -A INPUT -p ipv6-icmp --icmpv6-type 134 -j ACCEPT  # Router Advertisement
+  ip6tables -A INPUT -p ipv6-icmp --icmpv6-type 135 -j ACCEPT  # Neighbor Solicitation
+  ip6tables -A INPUT -p ipv6-icmp --icmpv6-type 136 -j ACCEPT  # Neighbor Advertisement
 
   # Allow NTP traffic for time synchronization.
   ip6tables -A OUTPUT -p udp --dport 123 -j ACCEPT
